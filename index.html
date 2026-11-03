@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="One-dimensional Wasserstein displacement interpolation with SciPy and Pyodide." />
+  <title>Wasserstein Geodesic · 1D</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+  <script defer src="gif_encoder.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">W<span>₂</span></div>
+        <div>
+          <div class="brand-title">Displacement interpolation</div>
+          <div class="brand-sub">Optimal transport on ℝ</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a id="github-link" class="github-link" href="https://github.com/Bubbu0129/wasserstein-geodesic" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a>
+        <div class="runtime"><span class="status-dot" id="status-dot"></span><span id="runtime-status" role="status">Loading Python + SciPy…</span></div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel controls">
+        <div class="panel-heading">
+          <div class="eyebrow">CONFIGURATION</div>
+          <h1>Probability measures</h1>
+          <p>Choose a continuous <code>scipy.stats</code> distribution. <a href="https://docs.scipy.org/doc/scipy/reference/stats.html" target="_blank" rel="noopener noreferrer">SciPy stats reference ↗</a></p>
+        </div>
+
+        <section class="distribution-card source-card" aria-labelledby="source-heading">
+          <div class="dist-heading"><span class="dist-indicator source"></span><h2 id="source-heading">Source · μ</h2></div>
+          <label for="source-name">SciPy family</label>
+          <input class="family-input" id="source-name" list="families" autocomplete="off" spellcheck="false" placeholder="Select or type a distribution" />
+          <div class="family-documentation">
+            <a id="source-docs" target="_blank" rel="noopener noreferrer" hidden></a>
+            <details id="source-help" hidden><summary>Python help</summary><pre id="source-help-text"></pre></details>
+          </div>
+          <div class="field-grid" id="source-fields"></div>
+        </section>
+
+        <button id="swap" class="swap-btn" type="button" title="Swap source and target">⇅ &nbsp; Swap distributions</button>
+
+        <section class="distribution-card target-card" aria-labelledby="target-heading">
+          <div class="dist-heading"><span class="dist-indicator target"></span><h2 id="target-heading">Target · ν</h2></div>
+          <label for="target-name">SciPy family</label>
+          <input class="family-input" id="target-name" list="families" autocomplete="off" spellcheck="false" placeholder="Select or type a distribution" />
+          <div class="family-documentation">
+            <a id="target-docs" target="_blank" rel="noopener noreferrer" hidden></a>
+            <details id="target-help" hidden><summary>Python help</summary><pre id="target-help-text"></pre></details>
+          </div>
+          <div class="field-grid" id="target-fields"></div>
+        </section>
+        <datalist id="families"></datalist>
+
+        <button id="compute" class="primary" disabled type="button">Compute geodesic <span>→</span></button>
+        <p class="note" id="family-count">Preparing distribution catalogue…</p>
+      </aside>
+
+      <main class="main">
+        <section class="panel chart-panel">
+          <div class="figure-header">
+            <div>
+              <div class="eyebrow">WASSERSTEIN SPACE · W₂(ℝ)</div>
+              <h2>Geodesic evolution</h2>
+            </div>
+            <div class="metric"><small>TRANSPORT DISTANCE</small><strong id="distance">—</strong></div>
+          </div>
+          <div class="plot-wrap">
+            <canvas id="plot" role="img" aria-label="Probability density chart showing source, target and interpolated distribution"></canvas>
+          </div>
+          <div class="legend"><span><i class="swatch source-line"></i>μ · source</span><span><i class="swatch current-line"></i>μ<sub>t</sub> · geodesic</span><span><i class="swatch target-line"></i>ν · target</span></div>
+
+          <div class="player">
+            <div class="player-head">
+              <span class="eyebrow">INTERPOLATION PARAMETER</span>
+              <span class="time-reading">t = <strong id="time-display">0.00</strong></span>
+            </div>
+            <input type="range" id="time" min="0" max="100" step="1" value="0" disabled aria-label="Geodesic time t" />
+            <div class="player-actions">
+              <button id="play" class="play-button" type="button" disabled>▶ &nbsp; Play</button>
+              <div class="duration-control"><label for="duration">Duration</label><input id="duration" type="number" value="5" min="1" max="30" step="1" /><span>s</span></div>
+              <button id="export" class="export-button" type="button" disabled>↓ &nbsp; Export GIF</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <footer>All computations run locally in your browser · SciPy via Pyodide · Fixed viewport displays the central 99% of each endpoint.</footer>
+  </div>
+</body>
+</html>
