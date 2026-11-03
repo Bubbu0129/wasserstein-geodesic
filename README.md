@@ -1,81 +1,51 @@
-# Wasserstein geodesic visualization on ℝ
+# Wasserstein Geodesic Visualizer
 
-A GitHub Pages site and a standalone Python GIF generator sharing the same SciPy numerical implementation. In the browser, Pyodide runs the Python package locally, so no web server/backend is needed after the static files are served.
+An interactive visualization of displacement interpolation between probability distributions on \(\mathbb{R}\), using the quadratic Wasserstein distance \(W_2\).
 
-## Project layout
+**[Launch the visualizer](https://Bubbu0129.github.io/wasserstein-geodesic/)**
 
-```text
-wasserstein-geodesic-visualization/
-├── index.html                # Browser page
-├── app.js                    # HTML forms, playback, canvas renderer
-├── gif_encoder.js            # Browser-only GIF89a encoder
-├── styles.css
-├── wasserstein/
-│   ├── __init__.py
-│   └── geodesic.py            # Shared SciPy computation and GIF export
-├── make_gif.py               # Editable MU, NU, duration, output filename
-├── requirements.txt
-└── README.md
-```
+## Using the web interface
 
-## Use from a terminal
+1. **Choose distributions.** Select source \(\mu\) and target \(\nu\) from the available `scipy.stats` continuous distributions. Enter their parameters, including `loc` and `scale`. Refer to the [SciPy documentation](https://docs.scipy.org/doc/scipy/reference/stats.html) for details.
 
-From the project root:
+2. **Compute the geodesic.** Click **Compute geodesic** to visualize the interpolating probability densities. Use the time slider or playback controls to explore the evolution from \(\mu\) to \(\nu\). The Wasserstein distance between the distributions is also displayed.
 
-```bash
-python -m pip install -r requirements.txt
-```
+3. **Export the animation.** Adjust the playback duration and click **Export GIF** to save the animation.
 
-Edit **`MU` and `NU` near the top of `make_gif.py`**, for example:
+All numerical computations run locally in your browser using SciPy through Pyodide. No installation is required. The initial page load requires an internet connection and may take some time while Python and SciPy are initialized.
 
-```python
-from scipy.stats import norm, beta
+## Using the terminal
 
-MU = norm(loc=-2, scale=1)
-NU = beta(a=2, b=5, loc=-2, scale=4)
-```
+The project also provides a standalone Python script for generating GIF animations.
 
-Then run:
+Clone the repository and install the dependencies:
 
-```bash
-python make_gif.py
-```
+`git clone https://github.com/Bubbu0129/wasserstein-geodesic.git`
 
-This saves `wasserstein_geodesic.gif` (or the name configured in the script). To use the library from another script:
+`cd wasserstein-geodesic-visualization`
 
-```python
-from scipy.stats import norm, gamma
-from wasserstein import wasserstein_geodesic_gif
+`python -m pip install -r requirements.txt`
 
-wasserstein_geodesic_gif(norm(-1, 1), gamma(a=3), "output.gif", duration_seconds=5)
-```
+Open `make_gif.py` and configure the source and target distributions using SciPy's standard API:
 
-## Run the webpage locally
+- `MU`: source probability distribution
+- `NU`: target probability distribution
 
-Serve the repository root using an HTTP server:
+You can also change the output filename, animation duration, and frame rate.
 
-```bash
-python -m http.server 8000
-```
+Run:
 
-Visit <http://localhost:8000/>. Opening `index.html` directly as a `file://` URL will not work reliably.
+`python make_gif.py`
 
-Each distribution uses a searchable **native HTML `<input list="families">`** with a `<datalist>` of SciPy family names. Selecting or typing a name generates empty fields for its shape parameters, `loc`, and `scale`; all parameters must be filled in. The page starts without selected distributions or a computed animation. Clicking Compute before selecting both families does nothing. The family documentation opens SciPy's reference pages; expandable **Python help** displays the distribution's `__doc__` string directly from the installed SciPy runtime.
+The resulting GIF is saved to the configured output path.
 
-The first visit needs internet access to fetch Pyodide, NumPy, and SciPy. **Compute geodesic** calculates the interpolation frames once using the shared Python package. **Export GIF** encodes those precomputed frames entirely in JavaScript, with no additional Python computation, package downloads, or Matplotlib/Pillow. The browser export uses a fixed 800 × 440 canvas and a 256-color RGB332 palette. The length is controlled by the Duration field; the 101 computed frames are reused independently of the duration. The standalone Python GIF command still uses Matplotlib and Pillow.
+## Notes
 
-## Deploy on GitHub Pages
+The visualizer supports continuous SciPy distributions with finite second moments.
 
-1. Create a repository named **`wasserstein-geodesic-visualization`** and commit all of the above files, including the `wasserstein/` directory.
-2. In GitHub **Settings → Pages**, select **Deploy from a branch**, `main`, `/(root)`.
-3. Open `https://YOUR-USERNAME.github.io/wasserstein-geodesic-visualization/`.
+The geodesic is computed using one-dimensional optimal transport. Probability densities are approximated from transported quantile samples, with smoothing applied for visualization.
 
-The header's repository link detects `YOUR-USERNAME` from a `*.github.io` hostname and points to `https://github.com/YOUR-USERNAME/wasserstein-geodesic-visualization`. On localhost or a custom domain the link uses the placeholder `YOUR-USERNAME` by default; edit it in `configureGithubLink()` in `app.js` if necessary.
+## References
 
-## Numerical notes
-
-The shared Python implementation uses SciPy's inverse CDF (`.ppf`) to construct the one-dimensional quadratic-Wasserstein interpolation. It approximates densities using Gaussian-smoothed histograms of 4,000 matched particles; smoothing only affects visualization. The chart viewport shows the central 99% of each endpoint's tails, while the displayed distance uses the full particle grid.
-
-The distribution must have finite first and second moments; the computation validates inputs and rejects invalid parameters. A numerical quantile grid may need additional particles for heavy-tailed distributions.
-
-Pyodide is pinned to `314.0.7` in `index.html`.
+- [SciPy statistical distributions](https://docs.scipy.org/doc/scipy/reference/stats.html)
+- [Pyodide — Python in the browser](https://pyodide.org/)
