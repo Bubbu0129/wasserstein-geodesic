@@ -10,6 +10,7 @@ const state = {
   data: null,
   source: null,
   target: null,
+  docCache: new Map(),
   playing: false,
   animationId: null,
   busy: false,
@@ -34,19 +35,41 @@ function configureGithubLink() {
     `https://github.com/${username}/wasserstein-geodesic-visualization`;
 }
 
+function docInfo(name) {
+  if (!state.catalog || !Object.hasOwn(state.catalog, name)) return null;
+  if (!state.docCache.has(name)) {
+    state.pyodide.globals.set("help_family_name", name);
+    const doc = state.pyodide.runPython("geodesic.distribution_help(help_family_name)");
+    state.docCache.set(name, {
+      notes: SciPyDoc.extractNotes(doc),
+      defaults: SciPyDoc.extractExampleDefaults(doc, state.catalog[name]),
+    });
+  }
+  return state.docCache.get(name);
+}
+
+function typesetNotes(side) {
+  const node = $(`${side}-help-text`);
+  if (window.MathJax?.typesetPromise) {
+    MathJax.typesetPromise([node]).catch((error) => console.warn("Math rendering failed:", error));
+  }
+}
+
 function updateDocumentation(side) {
-  const name = $(`${side}-name`).value;
+  const name = $(`${side}-name`).value.trim();
   const valid = state.catalog && Object.hasOwn(state.catalog, name);
   const link = $(`${side}-docs`);
   const details = $(`${side}-help`);
   link.hidden = !valid;
   details.hidden = !valid;
   details.open = false;
-  $(`${side}-help-text`).textContent = "";
+  const content = $(`${side}-help-text`);
+  content.replaceChildren();
   if (valid) {
     const path = `scipy.stats.${encodeURIComponent(name)}`;
     link.href = `https://docs.scipy.org/doc/scipy/reference/generated/${path}.html#${path}`;
     link.textContent = `${path} documentation ↗`;
+    SciPyDoc.renderNotes(content, docInfo(name).notes);
   }
 }
 
@@ -90,6 +113,7 @@ function renderFields(side, explicitParams = null) {
   const shapes = state.catalog[name];
   const cached = parent._previous?.name === name ? parent._previous.params : {};
   const values = explicitParams || cached;
+  const defaults = docInfo(name).defaults;
   for (const param of [...shapes, "loc", "scale"]) {
     const field = document.createElement("div");
     field.className = "field";
@@ -103,8 +127,8 @@ function renderFields(side, explicitParams = null) {
     input.type = "number";
     input.step = "any";
     input.required = true;
-    // Leave every parameter blank, including loc and scale.
-    input.value = values[param] ?? "";
+    const initial = param === "loc" ? 0 : param === "scale" ? 1 : defaults[param] ?? "";
+    input.value = Object.hasOwn(values, param) ? values[param] : initial;
     field.append(label, input);
     parent.append(field);
   }
@@ -350,13 +374,7 @@ function attachEvents() {
     input.addEventListener("input", () => chooseFamily(side));
     input.addEventListener("change", () => chooseFamily(side));
     $(`${side}-help`).addEventListener("toggle", (event) => {
-      if (!event.target.open || !state.pyodide) return;
-      const name = input.value.trim();
-      if (!Object.hasOwn(state.catalog, name)) return;
-      state.pyodide.globals.set("help_family_name", name);
-      $(`${side}-help-text`).textContent = state.pyodide.runPython(
-        "geodesic.distribution_help(help_family_name)"
-      );
+      if (event.target.open) typesetNotes(side);
     });
   }
   $("compute").addEventListener("click", computeGeodesic);

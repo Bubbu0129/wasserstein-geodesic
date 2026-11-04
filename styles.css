@@ -45,7 +45,10 @@ label { color: #5b6977; font-size: 11px; font-weight: 660; display: block; margi
 .family-documentation [hidden] { display: none; }
 .family-documentation details { margin-top: 6px; }
 .family-documentation summary { color: #52778c; cursor: pointer; }
-.family-documentation pre { max-height: 240px; overflow: auto; padding: 10px; margin-bottom: 4px; background: #f0f3f5; border-radius: 6px; white-space: pre-wrap; font-size: 10px; }
+.distribution-notes { max-height: 360px; overflow: auto; padding: 12px; margin: 7px 0 4px; background: #f0f3f5; border-radius: 6px; font-size: 12px; line-height: 1.55; }
+.distribution-notes p { margin: 0 0 10px; }
+.distribution-notes .math-display { padding: 8px 0; overflow-x: auto; }
+.distribution-notes mjx-container { max-width: 100%; }
 
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 14px; }
 .field-grid .field label { font-family: ui-monospace, monospace; font-size: 11px; }
