@@ -28,11 +28,11 @@ function messageFromError(error) {
 }
 
 function configureGithubLink() {
-  // Project Pages: https://USERNAME.github.io/wasserstein-geodesic-visualization/
+  // Project Pages: https://USERNAME.github.io/wasserstein-geodesic/
   const match = window.location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
-  const username = match ? match[1] : "YOUR-USERNAME";
+  const username = match ? match[1] : "USERNAME";
   $("github-link").href =
-    `https://github.com/${username}/wasserstein-geodesic-visualization`;
+    `https://github.com/${username}/wasserstein-geodesic`;
 }
 
 function docInfo(name) {

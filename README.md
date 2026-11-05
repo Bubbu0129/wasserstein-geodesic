@@ -47,13 +47,13 @@ $$
 and similarly for $\nu$. These generalized inverses are nondecreasing and satisfy
 
 $$
-(Q_\mu)_\#\lambda=\mu,\qquad (Q_\nu)_\#\lambda=\nu,
+(Q_\mu)_\\#\lambda=\mu,\qquad (Q_\nu)_\\#\lambda=\nu,
 $$
 
 where $\lambda$ is Lebesgue measure restricted to $(0,1)$, a probability measure. Thus
 
 $$
-\pi=(Q_\mu,Q_\nu)_\#\lambda
+\pi=(Q_\mu,Q_\nu)_\\#\lambda
 $$
 
 is a transport plan with marginals $\mu$ and $\nu$. It is the monotone coupling. For quadratic cost, matching ordered points is optimal: if $x_1\le x_2$ and $y_1\le y_2$, then
@@ -75,10 +75,10 @@ $$
 
 ### Equivalence with Brenier displacement interpolation
 
-In $\mathbb R^d$, if the source $\mu\in\mathcal P_2(\mathbb R^d)$ is absolutely continuous, Brenier's theorem gives an optimal map $T=\nabla u$, with $u$ convex, satisfying $T_\#\mu=\nu$. The quadratic Wasserstein geodesic is
+In $\mathbb R^d$, if the source $\mu\in\mathcal P_2(\mathbb R^d)$ is absolutely continuous, Brenier's theorem gives an optimal map $T=\nabla u$, with $u$ convex, satisfying $T_\\#\mu=\nu$. The quadratic Wasserstein geodesic is
 
 $$
-\mu_t=\bigl((1-t)\operatorname{id}+t\nabla u\bigr)_\#\mu,
+\mu_t=\bigl((1-t)\mathrm{id}+t\nabla u\bigr)_\\#\mu,
 \qquad 0\le t\le1.
 $$
 
@@ -94,13 +94,13 @@ $$
 T(Q_\mu(s))=Q_\nu(s)\qquad\text{for almost every }s.
 $$
 
-Using $\mu=(Q_\mu)_\#\lambda$, we obtain
+Using $\mu=(Q_\mu)_\\#\lambda$, we obtain
 
 $$
 \begin{aligned}
-\bigl((1-t)\operatorname{id}+tT\bigr)_\#\mu
-&=\bigl((1-t)Q_\mu+t(T\circ Q_\mu)\bigr)_\#\lambda\\
-&=\bigl((1-t)Q_\mu+tQ_\nu\bigr)_\#\lambda.
+\bigl((1-t)\mathrm{id}+tT\bigr)_\\#\mu
+&=\bigl((1-t)Q_\mu+t(T\circ Q_\mu)\bigr)_\\#\lambda\\
+&=\bigl((1-t)Q_\mu+tQ_\nu\bigr)_\\#\lambda.
 \end{aligned}
 $$
 
@@ -108,7 +108,7 @@ Therefore interpolating quantiles is precisely Brenier displacement interpolatio
 
 $$
 Q_t(s)=(1-t)Q_\mu(s)+tQ_\nu(s),
-\qquad \mu_t=(Q_t)_\#\lambda.
+\qquad \mu_t=(Q_t)_\\#\lambda.
 $$
 
 As $Q_t$ is nondecreasing, it is the quantile function of $\mu_t$ up to almost-everywhere equality. Applying the one-dimensional distance formula gives, for any $s,t\in[0,1]$,
@@ -126,7 +126,7 @@ Thus $(\mu_t)_{0\le t\le1}$ is the $W_2$-geodesic between $\mu$ and $\nu$.
 The quantile formula also works when the source has atoms. In that case an optimal transport *map* need not exist, but the monotone optimal *plan* $\pi$ always does, and
 
 $$
-\mu_t=\bigl((1-t)x+ty\bigr)_\#\pi
+\mu_t=\bigl((1-t)x+ty\bigr)_\\#\pi
 $$
 
 still defines the geodesic. This is the general displacement interpolation formula expressed through an optimal coupling.
@@ -142,8 +142,8 @@ $$
 then moves matched particles along straight lines:
 
 $$
-x_i(t)=(1-t)\,\operatorname{ppf}_\mu(s_i)
-+t\,\operatorname{ppf}_\nu(s_i).
+x_i(t)=(1-t) \mathrm{ppf}_\mu(s_i)
++t \mathrm{ppf}_\nu(s_i).
 $$
 
 These particles represent the discrete approximation
@@ -156,7 +156,7 @@ The reported distance is approximated by
 
 $$
 W_2(\mu,\nu)^2\approx\frac1N\sum_{i=0}^{N-1}
-\left|\operatorname{ppf}_\mu(s_i)-\operatorname{ppf}_\nu(s_i)\right|^2.
+\left|\mathrm{ppf}_\mu(s_i)-\mathrm{ppf}_\nu(s_i)\right|^2.
 $$
 
 The animation displays Gaussian-smoothed histograms of these particles. The computation uses 4,000 quantile particles by default; heavy tails or sharply concentrated densities may require finer resolution. Both input distributions must have finite second moments.
